@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Headless CMS Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .loading {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen font-sans text-gray-800">
+    <div class="max-w-4xl mx-auto p-8">
+      <header class="mb-12 text-center">
+        <h1
+          class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600 mb-4"
+        >
+          Frontend Demo
+        </h1>
+        <p class="text-gray-600">
+          Simulating an external website consuming the Headless API.
+        </p>
+      </header>
+
+      <!-- Configuration -->
+      <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-indigo-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
+          </svg>
+          API Configuration
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            id="websiteId"
+            placeholder="Website UUID"
+            class="w-full bg-gray-50 border border-gray-300 p-2 rounded focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+          <input
+            type="text"
+            id="slug"
+            placeholder="Page Slug (e.g., /home)"
+            class="w-full bg-gray-50 border border-gray-300 p-2 rounded focus:ring-2 focus:ring-indigo-500 outline-none"
+            value="/home"
+          />
+        </div>
+        <button
+          onclick="fetchContent()"
+          class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition-colors"
+        >
+          Load Content
+        </button>
+      </div>
+
+      <!-- Dynamic Content Area -->
+      <main id="content-root" class="space-y-8">
+        <div class="text-center text-gray-400 py-12">
+          Content will appear here...
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Use the values from your database/setup
+      // const DEFAULT_WEBSITE_ID = 'YOUR_WEBSITE_ID_HERE';
+
+      async function fetchContent() {
+        const websiteId = document.getElementById("websiteId").value;
+        const slug = document.getElementById("slug").value || "/";
+        const root = document.getElementById("content-root");
+
+        if (!websiteId) {
+          alert("Please enter a Website ID");
+          return;
+        }
+
+        root.innerHTML =
+          '<div class="loading bg-gray-200 h-64 rounded-xl"></div>';
+
+        try {
+          // Call the Next.js API
+          const res = await fetch(
+            `/api/v1/delivery/websites/${websiteId}/pages/${encodeURIComponent(slug)}`,
+          );
+
+          if (!res.ok) throw new Error("Failed to fetch content");
+
+          const { data } = await res.json();
+          renderPage(data, root);
+        } catch (error) {
+          root.innerHTML = `
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                        <p class="font-bold text-red-700">Error</p>
+                        <p class="text-red-600">${error.message}</p>
+                    </div>
+                `;
+        }
+      }
+
+      function renderPage(data, root) {
+        root.innerHTML = "";
+
+        // 1. Render Page Title
+        const title = document.createElement("h2");
+        title.className = "text-3xl font-bold mb-8 text-gray-900 border-b pb-4";
+        title.textContent = data.title;
+        root.appendChild(title);
+
+        // 2. Render Blocks
+        if (!data.blocks || data.blocks.length === 0) {
+          root.innerHTML +=
+            '<p class="text-gray-500">No content blocks found.</p>';
+          return;
+        }
+
+        data.blocks.forEach((block) => {
+          const section = document.createElement("section");
+          section.className =
+            "bg-white rounded-xl shadow-sm p-8 border border-gray-100 transition hover:shadow-md";
+
+          // Header (for demo purposes)
+          const header = document.createElement("div");
+          header.className =
+            "text-xs font-mono text-gray-400 mb-4 uppercase tracking-widest";
+          header.textContent = `Block: ${block.name}`;
+          section.appendChild(header);
+
+          // Content Renderer (Simple Mapper)
+          const contentDiv = document.createElement("div");
+          const c = block.content || {};
+
+          // Heuristic rendering based on keys
+          Object.entries(c).forEach(([key, value]) => {
+            // Array (Repeater)
+            if (Array.isArray(value)) {
+              const list = document.createElement("div");
+              list.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mt-4";
+              value.forEach((item) => {
+                const card = document.createElement("div");
+                card.className =
+                  "bg-gray-50 p-4 rounded border border-gray-200";
+                // Render item fields
+                Object.entries(item).forEach(([k, v]) => {
+                  const p = document.createElement("p");
+                  p.className = "mb-1";
+                  if (typeof v === "string" && v.startsWith("http")) {
+                    p.innerHTML = `<img src="${v}" class="w-full h-32 object-cover rounded mb-2" />`;
+                  } else {
+                    p.innerHTML = `<strong class="text-xs uppercase text-gray-500 block">${k}</strong> ${v}`;
+                  }
+                  card.appendChild(p);
+                });
+                list.appendChild(card);
+              });
+              contentDiv.appendChild(list);
+              return;
+            }
+
+            // Image
+            if (
+              key.includes("image") ||
+              (typeof value === "string" && value.startsWith("http"))
+            ) {
+              const img = document.createElement("img");
+              img.src = value;
+              img.className = "w-full max-h-96 object-cover rounded-lg mb-4";
+              img.alt = key;
+              contentDiv.appendChild(img);
+              return;
+            }
+
+            // Headline / Title
+            if (
+              key.includes("title") ||
+              key.includes("headline") ||
+              key.includes("name")
+            ) {
+              const h3 = document.createElement("h3");
+              h3.className = "text-2xl font-bold text-gray-800 mb-2";
+              h3.textContent = value;
+              contentDiv.appendChild(h3);
+              return;
+            }
+
+            // Text
+            const p = document.createElement("div");
+            p.className = "prose text-gray-600 mb-4";
+            p.textContent = value;
+            contentDiv.appendChild(p);
+          });
+
+          if (Object.keys(c).length === 0) {
+            contentDiv.innerHTML =
+              '<p class="italic text-gray-400">Empty block content.</p>';
+          }
+
+          section.appendChild(contentDiv);
+          root.appendChild(section);
+        });
+      }
+    </script>
+  </body>
+</html>
