@@ -33,29 +33,42 @@ export async function authenticate(prevState: string | undefined, formData: Form
   }
 }
 
-export async function createAdmin(prevState: string | undefined, formData: FormData) {
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+export async function createAdmin(prevState: any, formData: FormData) {
+  const name = formData.get('name') as string;
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const secretToken = formData.get('secretToken') as string; // <-- El token que viene de tu nuevo diseño
 
-    if (!name || !email || !password || password.length < 6) return "Invalid fields.";
+  // 1. 🚨 LA BARRERA DE SEGURIDAD 🚨
+  const masterToken = process.env.ADMIN_REGISTRATION_SECRET;
 
+  // Si no pusiste la variable en el .env, o si el usuario escribió mal la clave, lo rechazamos
+  if (!masterToken || secretToken !== masterToken) {
+    return '❌ Token de autorización inválido. Registro denegado.';
+  }
+
+  try {
+    // 2. Encriptamos la contraseña para mayor seguridad
     const hashedPassword = await bcrypt.hash(password, 10);
-    const client = await pool.connect();
 
-    try {
-        await client.query('INSERT INTO admins (name, email, password_hash) VALUES ($1, $2, $3)', [name, email, hashedPassword]);
-    } catch (error: any) {
-        if (error.code === '23505') return "Email already exists.";
-        console.error("Create admin error:", error);
-        return "Database error.";
-    } finally {
-        client.release();
+    // 3. Insertamos en Supabase (asegurándonos de usar la tabla 'admins' en minúsculas)
+    await pool.query(
+      `INSERT INTO admins (name, email, password_hash) VALUES ($1, $2, $3)`,
+      [name, email, hashedPassword]
+    );
+
+  } catch (error: any) {
+    // 4. Capturamos el error específico de Postgres si el email ya existe
+    if (error.code === '23505') { 
+      return 'Ese correo electrónico ya está registrado.';
     }
-    revalidatePath('/');
-    redirect('/login?message=AdminCreated');
-}
+    console.error('Error al crear admin en Supabase:', error);
+    return 'Error interno del servidor.';
+  }
 
+  // 5. Si pasamos todas las validaciones y se guardó, lo mandamos al login
+  redirect('/login');
+}
 export async function logOut() {
     await signOut({ redirectTo: '/login' });
 }
