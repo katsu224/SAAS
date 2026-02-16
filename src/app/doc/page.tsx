@@ -4,7 +4,10 @@ import {
     CpuChipIcon, 
     ShieldCheckIcon,
     BoltIcon,
-    ServerStackIcon
+    ServerStackIcon,
+    SparklesIcon,
+    BriefcaseIcon,
+    BookOpenIcon
 } from '@heroicons/react/24/outline';
 
 export default function IntroductionPage() {
@@ -17,7 +20,7 @@ export default function IntroductionPage() {
                     Aquí gestionas el contenido puro; la visualización es problema de tu framework (Next.js, Astro, React).
                 </p>
                 
-                <div className="flex gap-4 mt-8">
+                <div className="flex flex-wrap gap-4 mt-8">
                     <a href="/doc/integration" className="bg-[#9D2B48] text-white px-6 py-3 rounded-full font-bold hover:bg-[#80223A] transition no-underline">
                         Empezar Integración &rarr;
                     </a>
@@ -26,6 +29,44 @@ export default function IntroductionPage() {
                     </a>
                 </div>
             </div>
+
+            <section id="explorar" className="mb-24 scroll-mt-24">
+                 <h2 className="flex items-center gap-3 text-3xl font-bold text-slate-900 mb-8 pb-2 border-b border-slate-100">
+                    <BookOpenIcon className="w-8 h-8 text-[#9D2B48]" />
+                    Explora la Documentación
+                </h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                    <a href="/doc/features" className="group block bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-[#9D2B48]/30 transition-all no-underline">
+                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <SparklesIcon className="w-6 h-6 text-purple-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-[#9D2B48] transition-colors">Features</h3>
+                        <p className="text-slate-600 text-sm">
+                            Descubre el Constructor Visual, Multi-Tenancy y Previews en tiempo real.
+                        </p>
+                    </a>
+
+                    <a href="/doc/architecture" className="group block bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-[#9D2B48]/30 transition-all no-underline">
+                        <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <CpuChipIcon className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-[#9D2B48] transition-colors">Arquitectura</h3>
+                        <p className="text-slate-600 text-sm">
+                            Deep-dive técnico: Next.js 15, PostgreSQL, Edge Caching y Seguridad.
+                        </p>
+                    </a>
+
+                    <a href="/doc/business" className="group block bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-[#9D2B48]/30 transition-all no-underline">
+                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <BriefcaseIcon className="w-6 h-6 text-green-600" />
+                        </div>
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-[#9D2B48] transition-colors">Negocio SaaS</h3>
+                        <p className="text-slate-600 text-sm">
+                            Estrategias de monetización, escalabilidad y potencial White-Label.
+                        </p>
+                    </a>
+                </div>
+            </section>
 
             <section id="filosofia" className="mb-24 scroll-mt-24">
                 <h2 className="flex items-center gap-3 text-3xl font-bold text-slate-900 mb-8 pb-2 border-b border-slate-100">
@@ -100,67 +141,6 @@ export default function IntroductionPage() {
                     </table>
                 </div>
             </section>
-
-             <section id="arquitectura" className="mb-24 scroll-mt-24">
-                <h2 className="flex items-center gap-3 text-3xl font-bold text-slate-900 mb-8 pb-2 border-b border-slate-100">
-                    <BoltIcon className="w-8 h-8 text-[#9D2B48]" />
-                    Visión General de Arquitectura
-                </h2>
-                <div className="bg-slate-900 p-8 rounded-3xl text-slate-300 font-mono text-sm leading-relaxed overflow-x-auto shadow-2xl">
-                    <pre className="m-0">
-{`
-+---------------------+       +----------------------+       +-----------------------+
-|   CMS DASHBOARD     |       |   API LAYER (Rust/Node) |       |   YOUR FRONTEND       |
-|  (Next.js App)      |       |   (High Performance)    |       |   (Any Framework)     |
-+---------------------+       +----------------------+       +-----------------------+
-|                     |       |                      |       |                       |
-|  1. Editor crea     | ----> |  2. Valida JSON      |       |  4. Fetch Data        |
-|     Contenido       |       |     Schema           | <---- |     (GET /api/v1...)  |
-|                     |       |                      |       |                       |
-|  3. Guarda en DB    | <---- |  3. Persiste en PG   | ----> |  5. Render HTML       |
-|     (PostgreSQL)    |       |     (Supabase)       |       |     (SSR/SSG/ISR)     |
-|                     |       |                      |       |                       |
-+---------------------+       +----------------------+       +-----------------------+
-           ^                             ^                               ^
-           |                             |                               |
-    [ AUTH LAYER ]                [ CACHE LAYER ]                 [ CDN LAYER ]
-    (NextAuth.js)                 (Redis / Edge)                  (Vercel / Netlify)
-`}
-                    </pre>
-                </div>
-                <p className="mt-8 text-slate-600">
-                    La arquitectura está diseñada para ser <strong>tolerante a fallos</strong>. Si el dashboard del CMS cae, tu API de lectura sigue sirviendo contenido cacheado desde el Edge. Tu web nunca se rompe.
-                </p>
-            </section>
-
-            <section id="seguridad" className="mb-24 scroll-mt-24">
-                <h2 className="flex items-center gap-3 text-3xl font-bold text-slate-900 mb-8 pb-2 border-b border-slate-100">
-                    <ShieldCheckIcon className="w-8 h-8 text-[#9D2B48]" />
-                    Modelo de Seguridad (Tenancy)
-                </h2>
-                <p className="mb-6">
-                    Somos un sistema <strong>Multi-Tenant</strong> real. Esto significa aislamiento lógico estricto de los datos.
-                </p>
-                <ul className="grid sm:grid-cols-2 gap-6">
-                    <li className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <strong className="text-slate-900 block mb-2 text-lg">Aislamiento de Sitio</strong>
-                        <span className="text-slate-600">Un sitio A no puede acceder a los assets, páginas o bloques del sitio B, incluso si pertenecen al mismo dueño.</span>
-                    </li>
-                    <li className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <strong className="text-slate-900 block mb-2 text-lg">Read-Only Public API</strong>
-                        <span className="text-slate-600">La API de entrega es de solo lectura. Nadie puede modificar tu contenido sin un Token de Sesión de Admin válido.</span>
-                    </li>
-                    <li className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <strong className="text-slate-900 block mb-2 text-lg">Sanitización de HTML</strong>
-                        <span className="text-slate-600">Los campos de RichText son sanitizados en el servidor para prevenir ataques XSS (Cross-Site Scripting).</span>
-                    </li>
-                    <li className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <strong className="text-slate-900 block mb-2 text-lg">Backups Automáticos</strong>
-                        <span className="text-slate-600">Snapshot diario de la base de datos completa. Recuperación ante desastres (Point-in-time recovery).</span>
-                    </li>
-                </ul>
-            </section>
-
         </article>
     );
 }

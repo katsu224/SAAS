@@ -1,73 +1,85 @@
+'use client';
 
 import { 
-    CodeBracketIcon, 
     SwatchIcon, 
-    PhotoIcon,
     ServerStackIcon,
-    CubeTransparentIcon,
     ShieldCheckIcon,
     GlobeAltIcon,
-    MegaphoneIcon,
     DocumentMagnifyingGlassIcon,
     ArrowPathIcon
 } from '@heroicons/react/24/outline';
 
 export default function RecipesPage() {
     return (
-        <article className="prose prose-slate prose-lg max-w-none">
-            <header className="mb-12">
-                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Recetas Avanzadas & Patrones de Arquitectura</h1>
-                <p className="text-xl text-slate-500 leading-relaxed">
-                    Esta sección es para el desarrollador "Senior". Aquí exploramos cómo resolver problemas complejos: Formularios, Autenticación, SEO técnico y Estrategias de Caché.
+        <article className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            {/* ENCABEZADO */}
+            <header className="mb-16 border-b border-zinc-200 pb-10">
+                <h1 className="text-4xl md:text-5xl font-black text-zinc-900 tracking-tight mb-6">
+                    Recetas Avanzadas & Patrones de Arquitectura
+                </h1>
+                <p className="text-xl text-zinc-600 leading-relaxed max-w-3xl mb-8">
+                    Esta sección está diseñada para desarrolladores avanzados. Aquí exploramos cómo resolver problemas arquitectónicos complejos: Formularios, Autenticación, SEO técnico y Estrategias de Caché en un entorno Headless.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-4 text-sm font-bold">
-                    <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">Animaciones</span>
-                    <span className="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full">External APIs</span>
-                    <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">SEO & Metatags</span>
-                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">Auth Guards</span>
-                    <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">i18n</span>
+                <div className="flex flex-wrap gap-3 text-sm font-semibold">
+                    <span className="bg-purple-50 text-purple-700 ring-1 ring-purple-700/10 px-3.5 py-1.5 rounded-full">Animaciones</span>
+                    <span className="bg-cyan-50 text-cyan-700 ring-1 ring-cyan-700/10 px-3.5 py-1.5 rounded-full">External APIs</span>
+                    <span className="bg-emerald-50 text-emerald-700 ring-1 ring-emerald-700/10 px-3.5 py-1.5 rounded-full">SEO & Metadatos</span>
+                    <span className="bg-red-50 text-red-700 ring-1 ring-red-700/10 px-3.5 py-1.5 rounded-full">Auth Guards</span>
+                    <span className="bg-blue-50 text-blue-700 ring-1 ring-blue-700/10 px-3.5 py-1.5 rounded-full">i18n</span>
                 </div>
             </header>
 
-            {/* ANIMATIONS */}
-            <section id="animations" className="mb-20 scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                        <SwatchIcon className="w-6 h-6 text-purple-600" />
+            {/* 1. ANIMACIONES */}
+            <section id="animations" className="mb-24 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-purple-100 rounded-xl shadow-sm border border-purple-200">
+                        <SwatchIcon className="w-6 h-6 text-purple-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">Animaciones Controladas por CMS</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">Animaciones Controladas por CMS</h2>
                 </div>
                 
-                <p className="mb-4">
-                    No hardcodees las animaciones. Permite al editor de contenido decidir cómo entran los elementos en pantalla usando un campo `select`.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    Evita definir las animaciones de forma rígida en el código (hardcodear). Permite al editor de contenido decidir cómo entran los elementos en pantalla mediante un campo de selección (select) en el CMS.
                 </p>
 
-                <div className="grid lg:grid-cols-2 gap-8">
-                    <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg border border-slate-800 text-sm">
-                         <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-                            <span className="text-xs text-slate-400 font-mono">schema.json (CMS)</span>
+                <div className="grid lg:grid-cols-2 gap-6">
+                    {/* Código CMS */}
+                    <div className="bg-zinc-950 rounded-2xl overflow-hidden shadow-xl shadow-zinc-200 border border-zinc-800 flex flex-col">
+                         <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                            <div className="flex gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-500/20 ring-1 ring-red-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500/20 ring-1 ring-yellow-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-500/20 ring-1 ring-green-500/50"></div>
+                            </div>
+                            <span className="text-xs text-zinc-400 font-mono font-medium">schema.json (CMS)</span>
                         </div>
-                        <pre className="p-4 overflow-x-auto text-slate-300">
+                        <pre className="p-5 overflow-x-auto text-zinc-300 text-sm font-mono leading-relaxed flex-1">
                             <code>{`{
   "type": "select",
   "name": "animationType",
-  "label": "Animation Entry",
+  "label": "Animación de Entrada",
   "options": [
-    { "label": "None", "value": "none" },
-    { "label": "Fade In", "value": "fade-in" },
-    { "label": "Slide Up", "value": "slide-up" },
-    { "label": "Zoom In", "value": "zoom-in" }
+    { "label": "Ninguna", "value": "none" },
+    { "label": "Aparecer (Fade In)", "value": "fade-in" },
+    { "label": "Deslizar Arriba", "value": "slide-up" },
+    { "label": "Zoom", "value": "zoom-in" }
   ]
 }`}</code>
                         </pre>
                     </div>
 
-                    <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg border border-slate-800 text-sm">
-                         <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-                            <span className="text-xs text-slate-400 font-mono">Component.tsx (Frontend)</span>
+                    {/* Código Frontend */}
+                    <div className="bg-zinc-950 rounded-2xl overflow-hidden shadow-xl shadow-zinc-200 border border-zinc-800 flex flex-col">
+                         <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                             <div className="flex gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-500/20 ring-1 ring-red-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500/20 ring-1 ring-yellow-500/50"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-500/20 ring-1 ring-green-500/50"></div>
+                            </div>
+                            <span className="text-xs text-zinc-400 font-mono font-medium">Component.tsx (Frontend)</span>
                         </div>
-                        <pre className="p-4 overflow-x-auto text-slate-300">
-                            <code>{`// Mapa de variantes (ej. Framer Motion o Tailwind)
+                        <pre className="p-5 overflow-x-auto text-zinc-300 text-sm font-mono leading-relaxed flex-1">
+                            <code>{`// Mapa de variantes (Tailwind o Framer Motion)
 const animations = {
   'none': '',
   'fade-in': 'animate-fade-in opacity-0 fill-mode-forwards',
@@ -89,74 +101,100 @@ export default function HeroContent({ data }) {
                 </div>
             </section>
 
-             {/* EXTERNAL DATA */}
-             <section id="external-data" className="mb-20 scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-cyan-100 rounded-lg">
-                        <ServerStackIcon className="w-6 h-6 text-cyan-600" />
+             {/* 2. EXTERNAL DATA */}
+             <section id="external-data" className="mb-24 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-cyan-100 rounded-xl shadow-sm border border-cyan-200">
+                        <ServerStackIcon className="w-6 h-6 text-cyan-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">Inyectando Datos Externos (Hydration)</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">Inyectando Datos Externos (Hydration)</h2>
                 </div>
                 
-                <p className="mb-6">
-                    A veces necesitas mostrar datos que NO están en el CMS (clima, stock, precios de cripto). Usa el CMS para configurar <em>qué</em> mostrar, y tu código para obtener el <em>dato real</em>.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    En ocasiones, necesitas mostrar información que NO reside en el CMS (clima, inventario, precios de criptomonedas). Utiliza el CMS para configurar <em>qué</em> mostrar, y tu código para obtener el <em>dato real</em> en tiempo de ejecución.
                 </p>
 
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6">
-                    <h3 className="font-bold text-slate-800 mb-2">Caso: Widget de Clima</h3>
-                    <p className="text-sm text-slate-600 mb-4">
-                        1. Crea un bloque "WeatherWidget" en el CMS con campos: `city` (texto) y `units` (metric/imperial).<br/>
-                        2. En tu frontend, cuando encuentres un bloque de tipo "WeatherWidget", no solo renderices el HTML, haz un fetch a la API de OpenWeatherMap usando la `city` configurada.
-                    </p>
-                </div>
+                
 
-                <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg border border-slate-800 text-sm">
-                        <pre className="p-4 overflow-x-auto text-slate-300">
-                            <code>{`// Astro Server Component Example
-const { city, units } = Astro.props; // Datos del CMS
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                    <div className="bg-white p-8 rounded-2xl shadow-lg shadow-zinc-100 border border-zinc-200">
+                        <h3 className="text-xl font-bold text-zinc-900 mb-3">Caso Práctico: Widget de Clima</h3>
+                        <div className="space-y-4 text-zinc-600">
+                            <p>
+                                <strong className="text-zinc-900">Paso 1:</strong> Crea un bloque llamado "WeatherWidget" en el CMS con los campos: <code>city</code> (texto) y <code>units</code> (selector: metric/imperial).
+                            </p>
+                            <p>
+                                <strong className="text-zinc-900">Paso 2:</strong> En tu frontend, al detectar un bloque de este tipo, no solo renderices el HTML estático; realiza una petición a la API de OpenWeatherMap utilizando la ciudad configurada.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="bg-zinc-950 rounded-2xl overflow-hidden shadow-xl shadow-zinc-200 border border-zinc-800">
+                        <div className="px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                            <span className="text-cyan-400 font-bold font-mono text-xs uppercase tracking-wider">Astro Server Component</span>
+                        </div>
+                        <pre className="p-5 overflow-x-auto text-zinc-300 text-sm font-mono leading-relaxed">
+                            <code>{`const { city, units } = Astro.props; 
 const apiKey = import.meta.env.WEATHER_API_KEY;
 
-// Fetch server-side al construir la página (SSG/SSR)
-const weatherRes = await fetch(\`https://api.weather.../weather?q=\${city}&units=\${units}&appid=\${apiKey}\`);
-const weatherData = await weatherRes.json();
+// Fetch en el servidor (SSR/SSG)
+const res = await fetch(
+  \`https://api.weather.../weather?q=\${city}&units=\${units}\`
+);
+const data = await res.json();
 
 // Renderiza con datos REALES
-<div class="weather-card bg-blue-500 text-white p-4 rounded-lg">
-  <h3 class="font-bold">Weather in {city}</h3>
-  <p class="text-4xl font-mono">{Math.round(weatherData.main.temp)}°</p>
+<div class="weather-card bg-blue-500 text-white p-5 rounded-xl">
+  <h3 class="font-bold">Clima en {city}</h3>
+  <p class="text-4xl font-mono">{Math.round(data.main.temp)}°</p>
 </div>`}</code>
                         </pre>
                     </div>
+                </div>
             </section>
 
-            {/* SEO & METADATA */}
-            <section id="seo" className="mb-20 scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-emerald-100 rounded-lg">
-                        <DocumentMagnifyingGlassIcon className="w-6 h-6 text-emerald-600" />
+            {/* 3. SEO & METADATA */}
+            <section id="seo" className="mb-24 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-emerald-100 rounded-xl shadow-sm border border-emerald-200">
+                        <DocumentMagnifyingGlassIcon className="w-6 h-6 text-emerald-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">SEO & Metadata Dinámica</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">SEO & Metadatos Dinámicos</h2>
                 </div>
                 
-                <p className="mb-6">
-                    El SEO on-page se resuelve inyectando las etiquetas correctas en el <code>&lt;head&gt;</code>. Nuestro CMS provee los campos, tu framework los renderiza.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    El SEO on-page se resuelve inyectando las etiquetas correctas en el <code>&lt;head&gt;</code> del documento. Nuestro CMS provee los campos necesarios, y tu framework (Next.js/Astro) se encarga de renderizarlos.
                 </p>
 
-                <div className="grid md:grid-cols-2 gap-8">
-                     <div className="space-y-4">
-                        <div className="bg-white p-4 border border-slate-200 rounded-xl">
-                            <strong className="block text-slate-800 mb-1">Campos Recomendados (Root del Schema)</strong>
-                            <ul className="text-sm text-slate-600 list-disc pl-4 space-y-1">
-                                <li><code>seo_title</code> (Texto, Max 60 chars)</li>
-                                <li><code>seo_description</code> (Texto, Max 160 chars)</li>
-                                <li><code>og_image</code> (Imagen, 1200x630px)</li>
-                                <li><code>noindex</code> (Toggle, Default false)</li>
+                <div className="grid md:grid-cols-5 gap-8">
+                     <div className="md:col-span-2 space-y-4">
+                        <div className="bg-emerald-50/50 p-6 border border-emerald-100 rounded-2xl h-full">
+                            <h3 className="font-bold text-emerald-900 mb-4 text-lg">Campos Base (Root del Schema)</h3>
+                            <ul className="space-y-3">
+                                <li className="flex items-center gap-3 text-emerald-800">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span><code className="bg-white px-1.5 py-0.5 rounded text-sm font-semibold">seo_title</code> <span className="text-sm opacity-80">(Máx 60 carácteres)</span></span>
+                                </li>
+                                <li className="flex items-center gap-3 text-emerald-800">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span><code className="bg-white px-1.5 py-0.5 rounded text-sm font-semibold">seo_description</code> <span className="text-sm opacity-80">(Máx 160)</span></span>
+                                </li>
+                                <li className="flex items-center gap-3 text-emerald-800">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span><code className="bg-white px-1.5 py-0.5 rounded text-sm font-semibold">og_image</code> <span className="text-sm opacity-80">(1200x630px)</span></span>
+                                </li>
+                                <li className="flex items-center gap-3 text-emerald-800">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span><code className="bg-white px-1.5 py-0.5 rounded text-sm font-semibold">noindex</code> <span className="text-sm opacity-80">(Toggle booleano)</span></span>
+                                </li>
                             </ul>
                         </div>
                      </div>
-                     <div className="bg-slate-900 rounded-xl p-6 text-slate-300 text-sm">
-                        <span className="text-emerald-400 font-bold font-mono text-xs uppercase mb-2 block">Next.js Metadata API</span>
-                        <pre className="overflow-x-auto">
+                     <div className="md:col-span-3 bg-zinc-950 rounded-2xl overflow-hidden shadow-xl shadow-zinc-200 border border-zinc-800">
+                        <div className="px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                            <span className="text-emerald-400 font-bold font-mono text-xs uppercase tracking-wider">Next.js Metadata API</span>
+                        </div>
+                        <pre className="p-5 overflow-x-auto text-zinc-300 text-sm font-mono leading-relaxed">
                             <code>{`export async function generateMetadata({ params }) {
   const page = await getPageFromCMS(params.slug);
   
@@ -177,126 +215,143 @@ const weatherData = await weatherRes.json();
                 </div>
             </section>
 
-            {/* AUTH GUARDS */}
-            <section id="auth-guards" className="mb-20 scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-red-100 rounded-lg">
-                        <ShieldCheckIcon className="w-6 h-6 text-red-600" />
+            {/* 4. AUTH GUARDS */}
+            <section id="auth-guards" className="mb-24 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-red-100 rounded-xl shadow-sm border border-red-200">
+                        <ShieldCheckIcon className="w-6 h-6 text-red-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">Protección de Rutas (Auth Guards)</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">Protección de Rutas (Auth Guards)</h2>
                 </div>
 
-                <p className="mb-6">
-                    ¿Quieres crear una sección de "Miembros Premium"? Puedes usar un campo en el CMS para marcar páginas como protegidas y manejar la lógica en el Middleware.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    Para crear secciones exclusivas (ej. "Miembros Premium"), utiliza un campo en el CMS para marcar páginas como protegidas y maneja la lógica de redirección a nivel de red usando Middleware.
                 </p>
 
-                <div className="bg-red-50 border-l-4 border-red-500 p-6 my-6">
-                    <h3 className="text-red-900 text-lg font-bold m-0 mb-2">Estrategia de Middleware</h3>
-                    <p className="text-red-800 m-0 text-base">
-                        Añade un campo <code>visibility</code> ("public", "private", "admin") a tus páginas en el CMS.
-                        Cuando tu frontend hace fetch de la página, si detecta <code>visibility: "private"</code> y el usuario no tiene cookie de sesión, redirige a <code>/login</code> inmediatamente.
-                    </p>
-                </div>
+                
 
-                <pre className="bg-slate-900 text-slate-300 p-6 rounded-xl overflow-x-auto text-sm">
-<code>{`// middleware.ts (Next.js) example concept
-export async function middleware(req) {
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                    <div className="bg-red-50/50 border border-red-100 p-8 rounded-2xl h-full">
+                        <h3 className="text-red-900 text-xl font-bold mb-3">Estrategia de Middleware</h3>
+                        <p className="text-red-800 text-base leading-relaxed">
+                            Añade un campo <code>visibility</code> (con opciones como "public", "private", "admin") a tus páginas en el CMS. 
+                            <br/><br/>
+                            Cuando el framework recibe una petición, el middleware verifica la visibilidad. Si detecta <code>private</code> y el usuario no posee una sesión activa (cookie), la petición se intercepta y redirige a <code>/login</code> de manera instantánea.
+                        </p>
+                    </div>
+
+                    <div className="bg-zinc-950 text-zinc-300 rounded-2xl border border-zinc-800 overflow-hidden shadow-xl shadow-zinc-200 h-full">
+                        <div className="px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                            <span className="text-red-400 font-bold font-mono text-xs uppercase tracking-wider">middleware.ts (Next.js)</span>
+                        </div>
+                        <pre className="p-5 overflow-x-auto text-sm font-mono leading-relaxed">
+<code>{`export async function middleware(req) {
   const slug = req.nextUrl.pathname;
-  // Fetch ligero solo para chequear permisos (o usar caché de redis edge)
+  
+  // Fetch ligero o caché de Redis en el Edge
   const pageMeta = await fetchPageMeta(slug); 
   
   if (pageMeta.visibility === 'private') {
     const session = await getSession(req);
+    
     if (!session) {
-       return NextResponse.redirect(new URL('/login', req.url));
+       return NextResponse.redirect(
+         new URL('/login', req.url)
+       );
     }
   }
 }`}</code>
-                </pre>
+                        </pre>
+                    </div>
+                </div>
             </section>
 
-             {/* FORMS */}
-             <section id="forms" className="mb-20 scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                        <ArrowPathIcon className="w-6 h-6 text-orange-600" />
+             {/* 5. FORMS */}
+             <section id="forms" className="mb-24 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-orange-100 rounded-xl shadow-sm border border-orange-200">
+                        <ArrowPathIcon className="w-6 h-6 text-orange-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">Manejo de Formularios (Forms)</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">Manejo de Formularios Interactivos</h2>
                 </div>
                 
-                <p className="mb-6">
-                    Los bloques son estáticos, pero los formularios necesitan interactividad. La mejor forma es "hidratar" solo el formulario.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    Los bloques de contenido suelen ser estáticos, pero los formularios requieren interactividad. La práctica recomendada es aislar e "hidratar" únicamente el componente del formulario.
                 </p>
 
                 <div className="grid md:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                        <h3 className="font-bold text-slate-800 mb-2">El Bloque "ContactForm"</h3>
-                        <p className="text-sm text-slate-600 mb-4">
-                            Define en el CMS: `endpointUrl` (a dónde enviar los datos), `successMessage` (texto al enviar) y campos de configuración visual.
-                            <br/><br/>
-                            En el frontend, renderiza un componente Cliente <code>&lt;ContactFormClient /&gt;</code> que use <code>react-hook-form</code> o acciones nativas de HTML.
-                        </p>
+                    <div className="bg-white p-8 border border-zinc-200 rounded-2xl shadow-lg shadow-zinc-100">
+                        <h3 className="text-xl font-bold text-zinc-900 mb-3">El Bloque "ContactForm"</h3>
+                        <div className="text-zinc-600 space-y-4">
+                            <p>
+                                Define en el CMS propiedades como: <code>endpointUrl</code> (destino de los datos), <code>successMessage</code> (mensaje de éxito) y las etiquetas visuales.
+                            </p>
+                            <p>
+                                En el frontend, renderiza un <strong>Client Component</strong> (ej. <code>&lt;ContactFormClient /&gt;</code>) que gestione el estado usando herramientas como <code>react-hook-form</code> o Server Actions nativas.
+                            </p>
+                        </div>
                     </div>
-                     <div className="bg-slate-900 p-6 rounded-xl text-slate-300 text-sm">
-                        <span className="text-orange-400 font-bold font-mono text-xs uppercase mb-2 block">Server Action (Next.js)</span>
-<pre className="overflow-x-auto">
+                     <div className="bg-zinc-950 rounded-2xl border border-zinc-800 overflow-hidden shadow-xl shadow-zinc-200">
+                        <div className="px-4 py-3 bg-zinc-900 border-b border-zinc-800">
+                            <span className="text-orange-400 font-bold font-mono text-xs uppercase tracking-wider">Server Action (Next.js)</span>
+                        </div>
+<pre className="p-5 overflow-x-auto text-zinc-300 text-sm font-mono leading-relaxed">
 <code>{`// actions.ts
 'use server'
 export async function submitContact(formData) {
-    const email = formData.get('email');
-    // Guardar en DB o enviar email via Resend/SendGrid
-    await db.contacts.create({ email });
-    return { success: true };
+  const email = formData.get('email');
+  // Guardar en DB o procesar en SendGrid/Resend
+  await db.contacts.create({ email });
+  return { success: true };
 }
 
 // Client Component
 <form action={submitContact}>
   <input name="email" type="email" required />
-  <button type="submit">Enviar</button>
+  <button type="submit">Enviar Mensaje</button>
 </form>`}</code>
 </pre>
                      </div>
                 </div>
             </section>
 
-             {/* I18N */}
-             <section id="i18n" className="scroll-mt-24">
-                <div className="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                        <GlobeAltIcon className="w-6 h-6 text-blue-600" />
+             {/* 6. I18N */}
+             <section id="i18n" className="mb-12 scroll-mt-24">
+                <div className="flex items-center gap-4 mb-6">
+                    <div className="p-2.5 bg-blue-100 rounded-xl shadow-sm border border-blue-200">
+                        <GlobeAltIcon className="w-6 h-6 text-blue-700" />
                     </div>
-                    <h2 className="text-3xl font-bold text-slate-800 m-0">Internacionalización (i18n)</h2>
+                    <h2 className="text-2xl font-bold text-zinc-900 m-0 tracking-tight">Internacionalización (i18n)</h2>
                 </div>
                 
-                <p className="mb-6">
-                    Soportar múltiples idiomas puede complicar la arquitectura. Recomendamos el enfoque de <strong>"Sitios Paralelos"</strong> o <strong>"Propiedades Localizadas"</strong>.
+                <p className="text-zinc-600 mb-8 text-lg">
+                    Implementar múltiples idiomas puede añadir complejidad a la arquitectura. Según el alcance del proyecto, recomendamos el enfoque de <strong>Sitios Paralelos</strong> o <strong>Propiedades Localizadas</strong>.
                 </p>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
-                        <h3 className="text-blue-900 font-bold text-lg mb-2">Estrategia A: Sitios Paralelos</h3>
-                        <p className="text-blue-800 text-sm mb-4">
-                            Creas <code>misitio.com</code> (ES) y <code>en.misitio.com</code> (EN) como dos "Sites" distintos en el Tenant.
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div className="bg-blue-50/50 p-8 rounded-2xl border border-blue-100 hover:border-blue-300 transition-colors">
+                        <h3 className="text-blue-900 font-bold text-xl mb-3">A: Sitios Paralelos</h3>
+                        <p className="text-blue-800 text-base mb-5">
+                            Creas <code>misitio.com</code> (ES) y <code>en.misitio.com</code> (EN) como dos instancias o "Sites" completamente independientes dentro del mismo Tenant.
                         </p>
-                        <ul className="text-sm list-disc pl-5 text-blue-800 space-y-1">
-                            <li><strong>Pros:</strong> Total libertad de estructura entre idiomas.</li>
-                            <li><strong>Cons:</strong> Mantener contenido sincronizado es manual.</li>
+                        <ul className="space-y-2 text-blue-800/80">
+                            <li className="flex gap-2"><strong className="text-blue-900">Pros:</strong> Total libertad de estructura entre idiomas.</li>
+                            <li className="flex gap-2"><strong className="text-blue-900">Contras:</strong> Mantener el contenido idéntico sincronizado requiere esfuerzo manual.</li>
                         </ul>
                     </div>
 
-                    <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
-                        <h3 className="text-indigo-900 font-bold text-lg mb-2">Estrategia B: Propiedades Localizadas</h3>
-                        <p className="text-indigo-800 text-sm mb-4">
-                            Duplicas los campos en el Schema: <code>title_es</code>, <code>title_en</code>.
+                    <div className="bg-indigo-50/50 p-8 rounded-2xl border border-indigo-100 hover:border-indigo-300 transition-colors">
+                        <h3 className="text-indigo-900 font-bold text-xl mb-3">B: Propiedades Localizadas</h3>
+                        <p className="text-indigo-800 text-base mb-5">
+                            Duplicas los campos directamente en el esquema de la base de datos o JSON: <code>title_es</code> y <code>title_en</code>.
                         </p>
-                        <ul className="text-sm list-disc pl-5 text-indigo-800 space-y-1">
-                            <li><strong>Pros:</strong> Todo en un solo bloque. Sincronización perfecta.</li>
-                            <li><strong>Cons:</strong> Schemas más grandes y pesados.</li>
+                        <ul className="space-y-2 text-indigo-800/80">
+                            <li className="flex gap-2"><strong className="text-indigo-900">Pros:</strong> Todo gestionado en un solo bloque. La sincronización es automática.</li>
+                            <li className="flex gap-2"><strong className="text-indigo-900">Contras:</strong> Los esquemas de datos se vuelven más grandes y complejos.</li>
                         </ul>
                     </div>
                 </div>
             </section>
-
         </article>
     );
 }

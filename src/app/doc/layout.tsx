@@ -49,7 +49,17 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
                              <h5 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Introducción</h5>
                              <ul className="space-y-3 text-sm font-medium text-slate-600">
                                  <li><Link href="/doc" className={linkClass('/doc')}>Inicio & Filosofía</Link></li>
+                                 <li><Link href="/doc/business" className={linkClass('/doc/business')}>Modelo de Negocio</Link></li>
+                                 <li><Link href="/doc/architecture" className={linkClass('/doc/architecture')}>Arquitectura Técnica</Link></li>
+                             </ul>
+                         </div>
+
+                         <div>
+                             <h5 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Core</h5>
+                             <ul className="space-y-3 text-sm font-medium text-slate-600">
                                  <li><Link href="/doc/concepts" className={linkClass('/doc/concepts')}>Conceptos Básicos</Link></li>
+                                 <li><Link href="/doc/features" className={linkClass('/doc/features')}>Features Principales</Link></li>
+                                 <li><Link href="/doc/modeling" className={linkClass('/doc/modeling')}>Modelo de Datos</Link></li>
                              </ul>
                          </div>
 
@@ -58,7 +68,6 @@ export default function DocLayout({ children }: { children: React.ReactNode }) {
                              <ul className="space-y-3 text-sm font-medium text-slate-600">
                                  <li><Link href="/doc/api" className={linkClass('/doc/api')}>Referencia API</Link></li>
                                  <li><Link href="/doc/integration" className={linkClass('/doc/integration')}>Guías de Integración</Link></li>
-                                 <li><Link href="/doc/modeling" className={linkClass('/doc/modeling')}>Modelo de Datos</Link></li>
                              </ul>
                          </div>
 
