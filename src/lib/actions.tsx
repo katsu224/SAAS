@@ -2,7 +2,7 @@
 
 import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
-import pool from '@/lib/db';
+import pool from '@/lib/db'; // Asegúrate de que esta ruta sea correcta según tu proyecto
 import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -37,28 +37,22 @@ export async function createAdmin(prevState: any, formData: FormData) {
   const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  const secretToken = formData.get('secretToken') as string; // <-- El token que viene de tu nuevo diseño
+  const secretToken = formData.get('secretToken') as string;
 
   // 1. 🚨 LA BARRERA DE SEGURIDAD 🚨
   const masterToken = process.env.ADMIN_REGISTRATION_SECRET;
 
-  // Si no pusiste la variable en el .env, o si el usuario escribió mal la clave, lo rechazamos
   if (!masterToken || secretToken !== masterToken) {
     return '❌ Token de autorización inválido. Registro denegado.';
   }
 
   try {
-    // 2. Encriptamos la contraseña para mayor seguridad
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // 3. Insertamos en Supabase (asegurándonos de usar la tabla 'admins' en minúsculas)
     await pool.query(
       `INSERT INTO admins (name, email, password_hash) VALUES ($1, $2, $3)`,
       [name, email, hashedPassword]
     );
-
   } catch (error: any) {
-    // 4. Capturamos el error específico de Postgres si el email ya existe
     if (error.code === '23505') { 
       return 'Ese correo electrónico ya está registrado.';
     }
@@ -66,9 +60,9 @@ export async function createAdmin(prevState: any, formData: FormData) {
     return 'Error interno del servidor.';
   }
 
-  // 5. Si pasamos todas las validaciones y se guardó, lo mandamos al login
   redirect('/login');
 }
+
 export async function logOut() {
     await signOut({ redirectTo: '/login' });
 }
@@ -365,7 +359,7 @@ export async function updateBlockDraft(blockId: string, content: Record<string, 
     }
 }
 
-// Toma el borrador y lo copia a la web pública
+// Toma el borrador de UN SOLO bloque y lo copia a la web pública
 export async function publishBlock(blockId: string, pageId: string) {
     const client = await pool.connect();
     try {
@@ -380,6 +374,26 @@ export async function publishBlock(blockId: string, pageId: string) {
     } catch (error) {
         console.error('Error publishing block:', error);
         throw new Error('Error al publicar.');
+    } finally {
+        client.release();
+    }
+}
+
+// Toma TODOS los borradores de UNA PÁGINA y los copia a producción (La web se actualiza)
+export async function publishPage(pageId: string) {
+    const client = await pool.connect();
+    try {
+        await client.query(`
+            UPDATE blocks 
+            SET tenant_content = draft_content 
+            WHERE page_id = $1
+        `, [pageId]);
+        
+        revalidatePath(`/tenant/dashboard/sites/${pageId}/pages/${pageId}`);
+        return { success: true };
+    } catch (error) {
+        console.error('Error publishing page:', error);
+        throw new Error('Error al publicar la página entera.');
     } finally {
         client.release();
     }

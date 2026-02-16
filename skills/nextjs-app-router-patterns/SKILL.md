@@ -164,7 +164,7 @@ export async function ProductList({ category, sort, page }: ProductFilters) {
 'use client'
 
 import { useState, useTransition } from 'react'
-import { addToCart } from '@/app/actions/cart'
+import { addToCart } from '@/app/lib/actions/cart'
 
 export function AddToCartButton({ productId }: { productId: string }) {
   const [isPending, startTransition] = useTransition()
