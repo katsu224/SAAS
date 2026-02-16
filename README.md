@@ -1,114 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 SaaS CMS Multi-Tenant Enterprise
 
-## Getting Started
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg) ![License](https://img.shields.io/badge/license-MIT-green.svg) ![Status](https://img.shields.io/badge/status-development-orange.svg)
 
-First, run the development server:
+> **Una plataforma CMS de próxima generación diseñada para la escalabilidad, rendimiento y experiencia de usuario premium.**
+
+Este proyecto es una solución **SaaS (Software as a Service)** completa que permite la creación y gestión de múltiples sitios web (tenants) desde una única instalación. Construido con las tecnologías más modernas y robustas del ecosistema React.
+
+---
+
+## 🏗️ Arquitectura del Sistema
+
+La arquitectura está diseñada para ser **Stateless** y **Horizontalmente Escalable**. Utilizamos un modelo de separación lógica de datos para garantizar la seguridad y el rendimiento entre clientes.
+
+```mermaid
+graph TD
+    User[👤 Usuario Final]
+    Admin[👮 Administrador]
+
+    subgraph "Edge Network (CDN)"
+        Middleware[🛡️ Middleware (Next.js)]
+    end
+
+    subgraph "Application Core"
+        App[💻 Next.js App (Server & Client)]
+        Auth[🔐 NextAuth.js (Auth)]
+        API[🔌 API Routes / Actions]
+    end
+
+    subgraph "Data Layer"
+        DB[(🗄️ PostgreSQL)]
+        Prisma[🏗️ Prisma ORM]
+    end
+
+    User -->|Visita subdominio| Middleware
+    Admin -->|Gestiona| Middleware
+    Middleware -->|Enruta| App
+    App --> Auth
+    App --> API
+    API --> Prisma
+    Prisma --> DB
+
+    style User fill:#f9f,stroke:#333,stroke-width:2px
+    style Admin fill:#bbf,stroke:#333,stroke-width:2px
+    style DB fill:#bfb,stroke:#333,stroke-width:2px
+```
+
+---
+
+## ✨ Características Principales
+
+### 🏢 Multi-Tenancy Real
+
+Soporte nativo para múltiples organizaciones y sitios web utilizando **subdominios** dinámicos. Cada cliente tiene su propio espacio aislado pero compartiendo la misma infraestructura optimizada.
+
+### 🎨 Visual Builder Avanzado
+
+Un editor de contenido "arrastrar y soltar" que permite a los usuarios construir páginas complejas sin tocar una línea de código.
+
+- **Bloques Reutilizables**: Hero, Features, Testimonials, etc.
+- **Edición en Tiempo Real**: Lo que ves es lo que obtienes (WYSIWYG).
+
+### 🔐 Seguridad de Grado Enterprise
+
+- **Autenticación**: Integración completa con **NextAuth.js v5**.
+- **Roles y Permisos**: Sistema granular (Admin, Editor, Viewer).
+- **Protección de Datos**: Validación estricta con **Zod**.
+
+### ⚡ Performance Extremo
+
+- **Server Components**: Renderizado híbrido para máxima velocidad.
+- **Edge Caching**: Contenido estático servido desde el borde.
+- **Optimización de Imágenes**: Procesamiento automático con Next/Image.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+Este proyecto se basa en "The Modern Stack" para garantizar mantenibilidad y futuro.
+
+| Categoría         | Tecnología                                                        | Descripción                    |
+| ----------------- | ----------------------------------------------------------------- | ------------------------------ |
+| **Core**          | ![Next.js](https://img.shields.io/badge/Next.js-15-black)         | Framework React de producción. |
+| **Lenguaje**      | ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)     | Tipado estático para robustez. |
+| **Estilos**       | ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-cyan) | Diseño rápido y consistente.   |
+| **Base de Datos** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)    | Motor SQL relacional potente.  |
+| **ORM**           | ![Prisma](https://img.shields.io/badge/Prisma-5-white)            | Acceso a datos tipo-seguro.    |
+| **Auth**          | ![NextAuth](https://img.shields.io/badge/NextAuth.js-v5-purple)   | Autenticación flexible.        |
+
+---
+
+## 🚀 Guía de Inicio Rápido
+
+Sigue estos pasos para levantar el entorno de desarrollo local.
+
+### 1. Prerrequisitos
+
+Asegúrate de tener instalado:
+
+- Node.js 18+
+- PostgreSQL (Local o Docker)
+
+### 2. Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/saas-cms.git
+
+# Entrar al directorio
+cd saas-cms
+
+# Instalar dependencias
+npm install
+```
+
+### 3. Configuración de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto basándote en `.env.example`:
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/saas_db"
+NEXTAUTH_SECRET="tu_secreto_super_seguro"
+```
+
+### 4. Base de Datos
+
+```bash
+# Sincronizar esquema de Prisma
+npx prisma db push
+
+# (Opcional) Poblar con datos de prueba
+npm run seed
+```
+
+### 5. Ejecutar
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visita `http://localhost:3000` para ver la aplicación.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 Estructura del Proyecto
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Variables de Entorno (.env)
-
-Asegúrate de agregar las siguientes variables a tu archivo `.env` en la raíz del proyecto para conectar los servicios correctamente:
-
-```bash
-AUTH_SECRET="KbNOfhdgxAQlw9TUk+jA2V+g=ERUBD+7HdJGSILC2"
-# Conexión a tu nueva BD en Supabase
-DATABASE_URL="postgresql://postgres:c3-CgYqQH-yVNQN@db.bfbjgefievbscdxudxtn.supabase.co:5432/postgres"
-
-# El secreto compartido para Live Preview (CMS <-> Web)
-PREVIEW_SECRET="ultra_secreto_9273"
-
-# Cloudinary (Configuración de subida de imágenes - Paso 4)
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="tu_cloud_name"
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="tu_preset_sin_firma"
+```
+/src
+  ├── /app           # Rutas y Páginas (App Router)
+  │   ├── /api       # Endpoints de API
+  │   ├── /doc       # Documentación interna
+  │   ├── /tenant    # Rutas dinámicas para clientes
+  │   └── page.tsx   # Landing page principal
+  ├── /components    # Componentes React reutilizables
+  ├── /lib           # Utilidades y configuración (Prisma, Auth)
+  └── /types         # Definiciones de tipos TypeScript
 ```
 
-### Explicación de Variables
+---
 
-- **AUTH_SECRET**: Clave secreta para la encriptación de sesiones de Auth.js.
-- **DATABASE_URL**: URL de conexión PostgreSQL (ej. Supabase).
-- **PREVIEW_SECRET**: Clave privada compartida entre el CMS y el Frontend para autorizar vistas previas.
-- **NEXT*PUBLIC_CLOUDINARY*...**: Credenciales públicas para la subida de imágenes directa desde el cliente.
+## 🤝 Contribución
 
-## Integración con Frontend (Astro)
+¡Las contribuciones son bienvenidas! Por favor, lee nuestras guías de contribución antes de enviar un PR.
 
-Para conectar el CMS con tu sitio en Astro y habilitar el **Live Preview**, sigue estos pasos:
+1. Haz un Fork del proyecto
+2. Crea tu rama de características (`git checkout -b feature/AmazingFeature`)
+3. Haz Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Haz Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-### ✅ PASO 4: Que Astro valide y envíe el Token al Backend
+---
 
-Ahora le enseñaremos a Astro a leer ese `?token=` del Iframe, validarlo, y enviar la petición a la API de Next.js con el Header de Autorización.
-
-**Archivo en tu proyecto Astro:** `src/pages/room.astro`
-
-```typescript
-import MainLayout from "../layouts/MainLayout.astro";
-// ... tus otros imports
-
-// 1. Astro lee el token de la URL (viene del Iframe del CMS)
-const previewToken = Astro.url.searchParams.get("token");
-
-// 2. Astro compara el token de la URL con su propio .env
-const isPreview = previewToken === import.meta.env.PREVIEW_SECRET;
-
-// 3. Preparamos la URL de la API (con nocache si es preview)
-// IMPORTANTE: Reemplaza TU_ID con el ID real de tu website
-const API_URL = `http://localhost:3000/api/v1/delivery/websites/TU_ID/pages/room${isPreview ? `?preview=true&nocache=${Date.now()}` : ""}`;
-
-// 4. Preparamos los Headers. Si es preview, inyectamos la Autorización.
-const fetchHeaders: HeadersInit = isPreview
-  ? {
-      "Cache-Control": "no-cache",
-      Authorization: `Bearer ${import.meta.env.PREVIEW_SECRET}`, // <-- Arquitectura Limpia
-    }
-  : {};
-
-let rooms = [];
-// ... headerData y error
-
-try {
-  // 5. Hacemos el fetch seguro
-  const res = await fetch(API_URL, {
-    cache: isPreview ? "no-store" : "force-cache",
-    headers: fetchHeaders,
-  });
-
-  if (!res.ok) throw new Error(`API Error: ${res.status}`);
-  const json = await res.json();
-
-  // Asumiendo que la respuesta tiene la estructura de tus bloques
-  rooms = json.blocks || []; // Ajusta según tu estructura de respuesta principal
-
-  // ... resto de tu mapeo de bloques (rooms = rawData.map...)
-} catch (error) {
-  console.error("Error fetching data:", error);
-}
-```
+<div align="center">
+  <p>Construido con ❤️ por el equipo de Desarrollo</p>
+  <p>© 2026 SaaS CMS Inc.</p>
+</div>
