@@ -1,19 +1,23 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
+import pool from '@/lib/db';
+import bcrypt from 'bcrypt';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
+// ==========================================
+// AUTH & ADMIN FUNCTIONS
+// ==========================================
+
+export async function authenticate(prevState: string | undefined, formData: FormData) {
   try {
     const from = (formData.get('redirectTo') as string) || '/dashboard';
     await signIn('credentials', {
       ...Object.fromEntries(formData),
       redirect: false,
     });
-    
     redirect(from);
   } catch (error) {
     if ((error as any).message === 'NEXT_REDIRECT') {
@@ -21,67 +25,82 @@ export async function authenticate(
     }
     if (error instanceof AuthError) {
       switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
+        case 'CredentialsSignin': return 'Invalid credentials.';
+        default: return 'Something went wrong.';
       }
     }
     throw error;
   }
 }
 
-import pool from '@/lib/db';
-import bcrypt from 'bcrypt';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-
 export async function createAdmin(prevState: string | undefined, formData: FormData) {
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    if (!name || !email || !password || password.length < 6) {
-        return "Invalid fields.";
-    }
+    if (!name || !email || !password || password.length < 6) return "Invalid fields.";
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const client = await pool.connect();
 
     try {
-        await client.query(
-            'INSERT INTO admins (name, email, password_hash) VALUES ($1, $2, $3)',
-            [name, email, hashedPassword]
-        );
+        await client.query('INSERT INTO admins (name, email, password_hash) VALUES ($1, $2, $3)', [name, email, hashedPassword]);
     } catch (error: any) {
-        if (error.code === '23505') { // Unique violation
-            return "Email already exists.";
-        }
+        if (error.code === '23505') return "Email already exists.";
         console.error("Create admin error:", error);
         return "Database error.";
     } finally {
         client.release();
     }
-
     revalidatePath('/');
     redirect('/login?message=AdminCreated');
 }
 
-import { signOut } from '@/auth';
+export async function logOut() {
+    await signOut({ redirectTo: '/login' });
+}
+
+export async function getUsers() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT id, email, name, created_at FROM admins');
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  } finally {
+    client.release();
+  }
+}
+
+export async function testConnection() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT NOW()');
+    revalidatePath('/');
+    return { success: true, time: result.rows[0].now };
+  } catch (error) {
+    console.error('Connection error:', error);
+    return { success: false, error: 'Connection failed' };
+  } finally {
+    client.release();
+  }
+}
+
+// ==========================================
+// TENANT FUNCTIONS
+// ==========================================
 
 export async function getTenants(query: string = '', status: string = '') {
     const client = await pool.connect();
     try {
         let sql = 'SELECT * FROM tenants WHERE (name ILIKE $1 OR email ILIKE $1)';
         const params: any[] = [`%${query}%`];
-
         if (status) {
             sql += ` AND status = $${params.length + 1}`;
             params.push(status);
         }
-
         sql += ' ORDER BY created_at DESC';
-
         const result = await client.query(sql, params);
         return result.rows;
     } finally {
@@ -99,10 +118,7 @@ export async function createTenant(prevState: string | undefined, formData: Form
     const hashedPassword = await bcrypt.hash(password, 10);
     const client = await pool.connect();
     try {
-        await client.query(
-            'INSERT INTO tenants (name, email, password_hash) VALUES ($1, $2, $3)',
-            [name, email, hashedPassword]
-        );
+        await client.query('INSERT INTO tenants (name, email, password_hash) VALUES ($1, $2, $3)', [name, email, hashedPassword]);
     } catch (e) {
         return "Error creating tenant";
     } finally {
@@ -123,15 +139,9 @@ export async function updateTenant(id: string, prevState: string | undefined, fo
     try {
         if (password && password.length >= 6) {
              const hashedPassword = await bcrypt.hash(password, 10);
-             await client.query(
-                'UPDATE tenants SET name = $1, email = $2, password_hash = $3 WHERE id = $4',
-                [name, email, hashedPassword, id]
-            );
+             await client.query('UPDATE tenants SET name = $1, email = $2, password_hash = $3 WHERE id = $4', [name, email, hashedPassword, id]);
         } else {
-            await client.query(
-                'UPDATE tenants SET name = $1, email = $2 WHERE id = $3',
-                [name, email, id]
-            );
+            await client.query('UPDATE tenants SET name = $1, email = $2 WHERE id = $3', [name, email, id]);
         }
     } catch (e) {
         return "Error updating tenant";
@@ -142,6 +152,31 @@ export async function updateTenant(id: string, prevState: string | undefined, fo
     revalidatePath(`/dashboard/tenants/${id}`);
     return "Success";
 }
+
+export async function toggleTenantStatus(id: string, currentStatus: string) {
+    const newStatus = currentStatus === 'active' ? 'suspended' : 'active';
+    const client = await pool.connect();
+    try {
+        await client.query('UPDATE tenants SET status = $1 WHERE id = $2', [newStatus, id]);
+    } finally {
+        client.release();
+    }
+    revalidatePath('/dashboard');
+}
+
+export async function getTenantById(id: string) {
+    const client = await pool.connect();
+    try {
+        const result = await client.query('SELECT * FROM tenants WHERE id = $1', [id]);
+        return result.rows[0];
+    } finally {
+        client.release();
+    }
+}
+
+// ==========================================
+// WEBSITE & PAGE FUNCTIONS
+// ==========================================
 
 export async function getTenantWebsites(tenantId: string) {
     const client = await pool.connect();
@@ -156,18 +191,24 @@ export async function getTenantWebsites(tenantId: string) {
     }
 }
 
+export async function getTenantAssignedWebsites(tenantId: string) {
+    const client = await pool.connect();
+    try {
+        const result = await client.query('SELECT * FROM websites WHERE tenant_id = $1 ORDER BY created_at DESC', [tenantId]);
+        return result.rows;
+    } finally {
+        client.release();
+    }
+}
+
 export async function createWebsite(tenantId: string, prevState: string | undefined, formData: FormData) {
     const name = formData.get('name') as string;
     const baseUrl = formData.get('base_url') as string;
-
     if (!name) return "Name is required.";
 
     const client = await pool.connect();
     try {
-        await client.query(
-            'INSERT INTO websites (tenant_id, name, base_url, status) VALUES ($1, $2, $3, $4)',
-            [tenantId, name, baseUrl, 'draft']
-        );
+        await client.query('INSERT INTO websites (tenant_id, name, base_url, status) VALUES ($1, $2, $3, $4)', [tenantId, name, baseUrl, 'draft']);
     } catch (e) {
         console.error("Error creating website:", e);
         return "Error creating website.";
@@ -201,19 +242,13 @@ export async function getPages(websiteId: string) {
 export async function createPage(websiteId: string, prevState: string | undefined, formData: FormData) {
     const title = formData.get('title') as string;
     const slug = formData.get('slug') as string;
-
     if (!title || !slug) return "Title and Slug are required.";
 
     const client = await pool.connect();
     try {
-        await client.query(
-            'INSERT INTO pages (website_id, title, slug) VALUES ($1, $2, $3)',
-            [websiteId, title, slug]
-        );
+        await client.query('INSERT INTO pages (website_id, title, slug) VALUES ($1, $2, $3)', [websiteId, title, slug]);
     } catch (e: any) {
-        if (e.code === '23505') { // Unique violation
-            return "Slug already exists for this website.";
-        }
+        if (e.code === '23505') return "Slug already exists for this website.";
         console.error("Error creating page:", e);
         return "Error creating page.";
     } finally {
@@ -223,41 +258,48 @@ export async function createPage(websiteId: string, prevState: string | undefine
     return "Success";
 }
 
+// ==========================================
+// BLOCK & CMS FUNCTIONS (A prueba de balas)
+// ==========================================
+
+export async function getPageBlocks(pageId: string) {
+    const client = await pool.connect();
+    try {
+        const result = await client.query('SELECT * FROM blocks WHERE page_id = $1 ORDER BY order_index ASC', [pageId]);
+        return result.rows;
+    } finally {
+        client.release();
+    }
+}
+
+// Guarda la estructura del bloque (Admin Schema) sin borrar los datos del cliente
 export async function savePageBlocks(pageId: string, blocks: any[]) {
     const client = await pool.connect();
     try {
-        await client.query('BEGIN'); // Iniciamos transacción segura
+        await client.query('BEGIN');
         
-        // 1. Obtener los IDs de los bloques que ya existen en la BD para esta página
         const existingRes = await client.query('SELECT id FROM blocks WHERE page_id = $1', [pageId]);
         const existingIds = existingRes.rows.map(row => row.id);
-        
-        // 2. Extraer los IDs de los bloques que vienen desde el frontend (el estado actual del builder)
         const incomingIds = blocks.map(b => b.id);
 
-        // 3. BORRAR: Si un bloque estaba en la BD pero ya no viene del frontend (porque el Admin lo eliminó), lo borramos de verdad
         const idsToDelete = existingIds.filter(id => !incomingIds.includes(id));
         if (idsToDelete.length > 0) {
             await client.query('DELETE FROM blocks WHERE id = ANY($1::uuid[])', [idsToDelete]);
         }
 
-        // 4. ACTUALIZAR o INSERTAR (Upsert seguro)
         for (let i = 0; i < blocks.length; i++) {
             const block = blocks[i];
             
             if (existingIds.includes(block.id)) {
-                // SI EL BLOQUE YA EXISTÍA: Actualizamos nombre, orden y esquema. 
-                // 🛑 ¡NO TOCAMOS tenant_content PARA NO BORRAR LOS DATOS DEL CLIENTE!
                 await client.query(`
                     UPDATE blocks 
                     SET name = $1, order_index = $2, admin_schema = $3
                     WHERE id = $4
                 `, [block.name, i, JSON.stringify(block.admin_schema), block.id]);
             } else {
-                // SI ES UN BLOQUE NUEVO: Lo insertamos completo, inicializando el contenido vacío '{}'
                 await client.query(`
-                    INSERT INTO blocks (id, page_id, name, order_index, admin_schema, tenant_content)
-                    VALUES ($1, $2, $3, $4, $5, '{}')
+                    INSERT INTO blocks (id, page_id, name, order_index, admin_schema, tenant_content, draft_content)
+                    VALUES ($1, $2, $3, $4, $5, '{}', '{}')
                 `, [block.id, pageId, block.name, i, JSON.stringify(block.admin_schema)]);
             }
         }
@@ -270,33 +312,10 @@ export async function savePageBlocks(pageId: string, blocks: any[]) {
     } finally {
         client.release();
     }
-    
-    // Revalidar para que los cambios se reflejen inmediatamente
-    revalidatePath(`/dashboard/sites/${pageId}/builder`); 
+    revalidatePath(`/dashboard/sites/${pageId}/builder`);
 }
 
-export async function getPageBlocks(pageId: string) {
-    const client = await pool.connect();
-    try {
-        const result = await client.query('SELECT * FROM blocks WHERE page_id = $1 ORDER BY order_index ASC', [pageId]);
-        return result.rows;
-    } finally {
-        client.release();
-    }
-}
-
-export async function getTenantAssignedWebsites(tenantId: string) {
-    console.log('getTenantAssignedWebsites called with:', tenantId); // DEBUG
-    const client = await pool.connect();
-    try {
-        const result = await client.query('SELECT * FROM websites WHERE tenant_id = $1 ORDER BY created_at DESC', [tenantId]);
-        console.log('getTenantAssignedWebsites result:', result.rows); // DEBUG
-        return result.rows;
-    } finally {
-        client.release();
-    }
-}
-
+// Actualiza el contenido público directamente (Legacy, mantenido por si lo necesitas)
 export async function updateBlockContent(blockId: string, content: any, pageId: string) {
     const client = await pool.connect();
     try {
@@ -310,68 +329,45 @@ export async function updateBlockContent(blockId: string, content: any, pageId: 
     } finally {
         client.release();
     }
-    // Revalidate the page so the form updates if needed, though state handles it locally mostly
     revalidatePath(`/tenant/dashboard/sites/${pageId}/pages/${pageId}`); 
 }
 
-export async function updateBlockDraft(blockId: string, content: any, pageId: string) {
+// Guarda el borrador (Lo que el cliente está editando antes de publicar)
+export async function updateBlockDraft(blockId: string, content: Record<string, any>, pageId: string) {
     const client = await pool.connect();
     try {
-        await client.query(
-            'UPDATE blocks SET draft_content = $1 WHERE id = $2',
-            [JSON.stringify(content), blockId]
-        );
+        await client.query(`
+            UPDATE blocks 
+            SET draft_content = $1
+            WHERE id = $2
+        `, [JSON.stringify(content), blockId]);
+        
+        revalidatePath(`/tenant/dashboard/sites/${pageId}/pages/${pageId}`);
+        return { success: true };
     } catch (error) {
-        console.error("Error updating block draft:", error);
-        throw new Error("Failed to update draft");
+        console.error('Error saving draft:', error);
+        throw new Error('Error al guardar el borrador.');
     } finally {
         client.release();
     }
-    revalidatePath(`/dashboard/sites/${pageId}/builder`);
 }
 
+// Toma el borrador y lo copia a la web pública
 export async function publishBlock(blockId: string, pageId: string) {
     const client = await pool.connect();
     try {
-        // Copy draft_content to tenant_content
         await client.query(`
-            UPDATE blocks
-            SET tenant_content = draft_content
+            UPDATE blocks 
+            SET tenant_content = draft_content 
             WHERE id = $1
         `, [blockId]);
+        
+        revalidatePath(`/tenant/dashboard/sites/${pageId}/pages/${pageId}`);
+        return { success: true };
     } catch (error) {
-        console.error("Error publishing block:", error);
-        throw new Error("Failed to publish block");
+        console.error('Error publishing block:', error);
+        throw new Error('Error al publicar.');
     } finally {
         client.release();
     }
-    revalidatePath(`/dashboard/sites/${pageId}/builder`);
-}
-
-export async function toggleTenantStatus(id: string, currentStatus: string) {
-    const newStatus = currentStatus === 'active' ? 'suspended' : 'active';
-    const client = await pool.connect();
-    try {
-        await client.query(
-            'UPDATE tenants SET status = $1 WHERE id = $2',
-            [newStatus, id]
-        );
-    } finally {
-        client.release();
-    }
-    revalidatePath('/dashboard');
-}
-
-export async function getTenantById(id: string) {
-    const client = await pool.connect();
-    try {
-        const result = await client.query('SELECT * FROM tenants WHERE id = $1', [id]);
-        return result.rows[0];
-    } finally {
-        client.release();
-    }
-}
-
-export async function logOut() {
-    await signOut({ redirectTo: '/login' });
 }

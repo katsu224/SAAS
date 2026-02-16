@@ -1,31 +1,57 @@
 import Link from 'next/link';
-import { PowerIcon } from '@heroicons/react/24/outline';
+import { PowerIcon, HomeIcon, Square3Stack3DIcon } from '@heroicons/react/24/outline';
 import { logOut } from '@/app/lib/actions';
 
 export default function SideNav() {
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2 bg-white dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800">
+    <div className="flex h-full flex-col bg-zinc-50 border-r border-zinc-200">
+      
+      {/* Área del Logo - Premium y minimalista */}
       <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
+        className="mb-4 flex h-20 items-center justify-start px-6 bg-white border-b border-zinc-200 hover:bg-zinc-50 transition-colors"
         href="/dashboard"
       >
-        <div className="w-32 text-white md:w-40" suppressHydrationWarning>
-           <span className="text-2xl font-bold">SiteManager</span>
+        <div className="flex items-center gap-3 text-zinc-900" suppressHydrationWarning>
+           {/* Ícono de la marca en caja magenta con sombra */}
+           <div className="w-8 h-8 rounded-lg bg-[#9D2B48] flex items-center justify-center text-white shadow-md shadow-[#9D2B48]/30">
+              <Square3Stack3DIcon className="w-5 h-5 stroke-2" />
+           </div>
+           <span className="text-xl font-black tracking-tight">SiteManager</span>
         </div>
       </Link>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+
+      {/* Área de Enlaces de Navegación */}
+      <div className="flex grow flex-row justify-between md:flex-col md:space-y-1 px-4">
+        
+        {/* Etiqueta de categoría (solo visible en escritorio) */}
+        <div className="hidden md:block text-[10px] font-bold text-zinc-400 uppercase tracking-widest px-3 mb-2 mt-4">
+            Menú Principal 📌
+        </div>
+
+        {/* Enlace Activo (Panel Principal) */}
         <Link
             href="/dashboard"
-            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 dark:bg-zinc-900 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 dark:hover:bg-zinc-800 dark:hover:text-blue-400 md:flex-none md:justify-start md:p-2 md:px-3"
+            className="flex h-[42px] grow items-center justify-center gap-3 rounded-xl bg-[#9D2B48]/10 text-[#9D2B48] font-bold text-sm md:flex-none md:justify-start px-3 transition-colors shadow-sm"
         >
-            Dashboard
+            <HomeIcon className="w-5 h-5 stroke-2" />
+            <span className="hidden md:block">Panel Principal</span>
         </Link>
-        {/* Add more links here later */}
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 dark:bg-zinc-900 md:block"></div>
-        <form action={logOut}>
-          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 dark:bg-zinc-900 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 dark:hover:bg-zinc-800 dark:hover:text-blue-400 md:flex-none md:justify-start md:p-2 md:px-3">
-            <PowerIcon className="w-6" />
-            <div className="hidden md:block">Sign Out</div>
+
+        {/* Espacio para futuros enlaces */}
+        {/* <Link href="/otro-link" className="flex h-[42px] grow items-center justify-center gap-3 rounded-xl text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 font-medium text-sm md:flex-none md:justify-start px-3 transition-colors">
+            <IconoAca className="w-5 h-5" />
+            <span className="hidden md:block">Otro Enlace</span>
+        </Link> 
+        */}
+
+        {/* Separador invisible para empujar el botón de salir hacia abajo */}
+        <div className="hidden h-auto w-full grow md:block"></div>
+
+        {/* Botón de Cerrar Sesión */}
+        <form action={logOut} className="pb-4">
+          <button className="flex h-[42px] w-full grow items-center justify-center gap-3 rounded-xl text-zinc-500 hover:bg-red-50 hover:text-red-600 font-medium text-sm md:flex-none md:justify-start px-3 transition-colors group">
+            <PowerIcon className="w-5 h-5 group-hover:stroke-2" />
+            <div className="hidden md:block group-hover:font-bold transition-all">Cerrar Sesión</div>
           </button>
         </form>
       </div>

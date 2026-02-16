@@ -10,8 +10,8 @@ export default function RegisterAdminPage() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-900">
-      <div className="w-full max-w-sm p-8 bg-white dark:bg-zinc-950 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-whitedark:bg-white">
+      <div className="w-full max-w-sm p-8 bg-white dark:bg-white rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800">
         <h1 className="text-2xl font-bold mb-6 text-center text-red-600">
           Secret Admin Registration
         </h1>
@@ -24,7 +24,7 @@ export default function RegisterAdminPage() {
               Name
             </label>
             <input
-              className="w-full px-3 py-2 border rounded-md dark:bg-zinc-900"
+              className="w-full px-3 py-2 border rounded-md dark:bg-white"
               id="name"
               type="text"
               name="name"
@@ -36,7 +36,7 @@ export default function RegisterAdminPage() {
               Email
             </label>
             <input
-              className="w-full px-3 py-2 border rounded-md dark:bg-zinc-900"
+              className="w-full px-3 py-2 border rounded-md dark:bg-white"
               id="email"
               type="email"
               name="email"
@@ -48,7 +48,7 @@ export default function RegisterAdminPage() {
               Password
             </label>
             <input
-              className="w-full px-3 py-2 border rounded-md dark:bg-zinc-900"
+              className="w-full px-3 py-2 border rounded-md dark:bg-white"
               id="password"
               type="password"
               name="password"

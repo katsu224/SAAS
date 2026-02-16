@@ -19,8 +19,8 @@ export default function Page() {
   const finalRedirectUrl = defaultRedirect; 
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-zinc-900">
-      <div className="w-full max-w-sm p-6 bg-white dark:bg-zinc-950 rounded-lg shadow-md border border-gray-200 dark:border-zinc-800">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 dark:bg-white">
+      <div className="w-full max-w-sm p-6 bg-white dark:bg-white rounded-lg shadow-md border border-gray-200 dark:border-zinc-800">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
             {role === 'admin' ? 'Admin Login' : 'Tenant Login'}
         </h1>
@@ -54,7 +54,7 @@ export default function Page() {
               Email
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-white dark:border-zinc-700 dark:text-white"
               id="email"
               type="email"
               name="email"
@@ -70,7 +70,7 @@ export default function Page() {
               Password
             </label>
             <input
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-white dark:border-zinc-700 dark:text-white"
               id="password"
               type="password"
               name="password"

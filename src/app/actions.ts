@@ -29,3 +29,28 @@ export async function testConnection() {
     client.release();
   }
 }
+export async function updateBlockDraft(blockId: string, content: Record<string, any>) {
+    const client = await pool.connect();
+    try {
+        await client.query(
+            'UPDATE blocks SET draft_content = $1 WHERE id = $2', 
+            [JSON.stringify(content), blockId]
+        );
+    } finally {
+        client.release();
+    }
+}
+
+// 2. Toma el borrador y lo copia a producción (La web se actualiza)
+export async function publishPage(pageId: string) {
+    const client = await pool.connect();
+    try {
+        await client.query(`
+            UPDATE blocks 
+            SET tenant_content = draft_content 
+            WHERE page_id = $1
+        `, [pageId]);
+    } finally {
+        client.release();
+    }
+}

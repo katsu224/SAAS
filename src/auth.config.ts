@@ -13,18 +13,20 @@ export const authConfig = {
       const isOnAdmin = nextUrl.pathname.startsWith('/admin');
       const isOnTenant = nextUrl.pathname.startsWith('/tenant');
       
+      // Protección de rutas para ADMIN
       if (isOnDashboard || isOnAdmin) {
         if (isLoggedIn && role === 'admin') return true;
-        return false; // Redirect unauthenticated or wrong role
+        return false; // Redirige al login si no es admin
       }
       
+      // Protección de rutas para TENANT (Clientes)
       if (isOnTenant) {
         if (isLoggedIn && role === 'tenant') return true;
         return false;
       }
 
+      // Redirección inteligente si ya están logueados y entran a /login
       if (isLoggedIn) {
-        // Redirect logged-in users away from login page to their respective dashboards
         if (nextUrl.pathname === '/login') {
              if (role === 'admin') return Response.redirect(new URL('/dashboard', nextUrl));
              if (role === 'tenant') return Response.redirect(new URL('/tenant/dashboard', nextUrl));
@@ -40,6 +42,7 @@ export const authConfig = {
       }
       return token;
     },
+    
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
@@ -48,5 +51,5 @@ export const authConfig = {
       return session;
     },
   },
-  providers: [], // Add providers with an empty array for now
+  providers: [], // Vacío aquí, los providers se inyectan en auth.ts
 } satisfies NextAuthConfig;

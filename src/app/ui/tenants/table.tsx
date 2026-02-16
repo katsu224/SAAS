@@ -1,5 +1,10 @@
 import { getTenants, toggleTenantStatus } from '@/app/lib/actions';
-import { PencilIcon, NoSymbolIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { 
+    PencilSquareIcon, 
+    NoSymbolIcon, 
+    CheckCircleIcon,
+    UsersIcon
+} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export default async function TenantTable({
@@ -11,76 +16,122 @@ export default async function TenantTable({
 }) {
   const tenants = await getTenants(query, status);
 
+  if (tenants.length === 0) {
+      return (
+          <div className="bg-white p-12 text-center flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mb-4 border border-zinc-100">
+                  <UsersIcon className="w-8 h-8 text-zinc-300" />
+              </div>
+              <p className="text-zinc-900 font-bold text-lg mb-1">No se encontraron clientes</p>
+              <p className="text-zinc-500 text-sm">Intenta ajustar tu búsqueda o crea un nuevo cliente.</p>
+          </div>
+      );
+  }
+
   return (
-    <div className="mt-6 flow-root">
-      <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 dark:bg-zinc-900 p-2 md:pt-0">
-          <table className="min-w-full text-gray-900 dark:text-gray-100">
-            <thead className="rounded-lg text-left text-sm font-normal">
-              <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">Name</th>
-                <th scope="col" className="px-3 py-5 font-medium">Email</th>
-                <th scope="col" className="px-3 py-5 font-medium">Status</th>
-                <th scope="col" className="px-3 py-5 font-medium">Date</th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-zinc-950">
-              {tenants.map((tenant: any) => (
-                <tr key={tenant.id} className="w-full border-b py-3 text-sm last-of-type:border-none border-gray-100 dark:border-zinc-800">
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-bold">
-                        {tenant.name[0]}
+    <div className="w-full overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead className="bg-zinc-50/80 border-y border-zinc-200">
+          <tr>
+            <th scope="col" className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                Cliente
+            </th>
+            <th scope="col" className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                Correo Electrónico
+            </th>
+            <th scope="col" className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                Estado
+            </th>
+            <th scope="col" className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+                Fecha de Registro
+            </th>
+            <th scope="col" className="px-6 py-4 text-[11px] font-bold text-zinc-500 uppercase tracking-wider text-right">
+                Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-zinc-100 bg-white">
+          {tenants.map((tenant: any) => {
+              const isActive = tenant.status === 'active';
+              
+              return (
+                <tr 
+                    key={tenant.id} 
+                    className="transition-colors hover:bg-zinc-50/50 group"
+                >
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <div className="flex items-center gap-4">
+                      {/* Avatar del cliente con tu color de marca */}
+                      <div className="h-10 w-10 rounded-full bg-[#9D2B48]/10 border border-[#9D2B48]/20 flex items-center justify-center text-[#9D2B48] font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
+                        {tenant.name.charAt(0).toUpperCase()}
                       </div>
-                      <p>{tenant.name}</p>
+                      <p className="font-bold text-zinc-900 text-sm">{tenant.name}</p>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">{tenant.email}</td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                        tenant.status === 'active' 
-                        ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
-                        : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
+                  
+                  <td className="whitespace-nowrap px-6 py-4">
+                      <span className="text-sm font-medium text-zinc-500">
+                          {tenant.email}
+                      </span>
+                  </td>
+                  
+                  <td className="whitespace-nowrap px-6 py-4">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold tracking-wide border shadow-sm ${
+                        isActive 
+                        ? 'bg-green-50 text-green-700 border-green-200' 
+                        : 'bg-red-50 text-red-700 border-red-200'
                     }`}>
-                        {tenant.status}
+                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        {isActive ? 'Activo' : 'Suspendido'}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {new Date(tenant.created_at).toLocaleDateString()}
+                  
+                  <td className="whitespace-nowrap px-6 py-4">
+                      <span className="text-sm text-zinc-500 font-medium bg-zinc-50 px-2.5 py-1 rounded-md border border-zinc-100">
+                        {new Date(tenant.created_at).toLocaleDateString('es-ES', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                        })}
+                      </span>
                   </td>
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex justify-end gap-3">
+                  
+                  <td className="whitespace-nowrap px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
+                        
+                        {/* Botón de Editar */}
                         <Link 
                             href={`/dashboard/tenants/${tenant.id}/settings`}
-                            className="rounded-md border p-2 hover:bg-gray-100 dark:hover:bg-zinc-800"
+                            className="p-2 rounded-lg text-zinc-400 hover:text-[#9D2B48] hover:bg-[#9D2B48]/10 transition-all focus:outline-none focus:ring-2 focus:ring-[#9D2B48]/20"
+                            title="Editar Cliente"
                         >
-                            <PencilIcon className="w-4" />
+                            <PencilSquareIcon className="w-5 h-5 stroke-2" />
                         </Link>
-                         <form action={toggleTenantStatus.bind(null, tenant.id, tenant.status)}>
+                        
+                        {/* Botón de Suspender/Activar */}
+                        <form action={toggleTenantStatus.bind(null, tenant.id, tenant.status)}>
                             <button 
-                                className={`rounded-md border p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 ${
-                                    tenant.status === 'active' ? 'text-red-600' : 'text-green-600'
+                                className={`p-2 rounded-lg transition-all focus:outline-none focus:ring-2 ${
+                                    isActive 
+                                    ? 'text-zinc-400 hover:text-red-600 hover:bg-red-50 focus:ring-red-200' 
+                                    : 'text-zinc-400 hover:text-green-600 hover:bg-green-50 focus:ring-green-200'
                                 }`}
-                                title={tenant.status === 'active' ? 'Suspend Tenant' : 'Activate Tenant'}
+                                title={isActive ? 'Suspender Cliente' : 'Activar Cliente'}
                             >
-                                {tenant.status === 'active' ? (
-                                    <NoSymbolIcon className="w-4" />
+                                {isActive ? (
+                                    <NoSymbolIcon className="w-5 h-5 stroke-2" />
                                 ) : (
-                                    <CheckCircleIcon className="w-4" />
+                                    <CheckCircleIcon className="w-5 h-5 stroke-2" />
                                 )}
                             </button>
                         </form>
                     </div>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

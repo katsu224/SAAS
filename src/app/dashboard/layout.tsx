@@ -3,7 +3,7 @@ import Header from '@/app/ui/dashboard/header';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-zinc-50 dark:bg-zinc-900">
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden bg-whitedark:bg-white">
       <div className="w-full flex-none md:w-64">
         <SideNav />
       </div>
